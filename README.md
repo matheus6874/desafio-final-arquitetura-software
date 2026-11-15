@@ -1,150 +1,78 @@
-# Desafio Final — Bootcamp Arquiteto(a) de Software
+# API de Clientes para Parceiros
 
-## 1. Objetivo
+API REST para consulta e manutenção de clientes de uma empresa de vendas online, desenvolvida em Java 21 com Spring Boot 3.5.16. A aplicação segue MVC e utiliza Spring Data JPA com H2 em modo arquivo para manter os dados entre reinicializações.
 
-O objetivo deste desafio é aplicar os conhecimentos adquiridos durante o Bootcamp de Arquiteto(a) de Software, desenvolvendo uma solução que contemple os principais conceitos de arquitetura de software, modelagem arquitetural e desenvolvimento de APIs REST.
+## Executar
 
-O cenário proposto é o de uma grande empresa de vendas on-line que necessita disponibilizar publicamente dados de Cliente, Produto ou Pedido para seus parceiros.
+Requisitos: JDK 21 e Maven 3.6.3 ou superior.
 
-A solução consiste em projetar, documentar e implementar uma API REST seguindo o padrão arquitetural **MVC (Model-View-Controller)**, disponibilizando operações CRUD e funcionalidades complementares.
-
-## 2. Objetivos de aprendizagem
-
-Exercitar os seguintes conceitos trabalhados nos módulos do Bootcamp:
-
-- Fundamentos de Arquitetura de Software.
-- Requisitos Arquiteturais e Modelagem Arquitetural.
-- Design Patterns, Estilos e Padrões Arquiteturais.
-- Principais Arquiteturas de Software da Atualidade.
-
-## 3. Requisitos do desafio
-
-### 3.1. Plataforma e linguagem
-
-Utilizar uma plataforma e linguagem de programação de preferência.
-
-Exemplos:
-- Java com Spring Boot.
-- Python com Flask.
-- Node.js com Express.
-
-### 3.2. Funcionalidades da API
-
-Desenvolver uma API RESTful que implemente operações CRUD básicas sobre um domínio de negócio à escolha, como:
-
-- Clientes.
-- Produtos.
-- Pedidos.
-
-A API deverá implementar as seguintes funcionalidades:
-
-| Operação | Descrição |
-|---|---|
-| Create | Criação de registros. |
-| Read | Leitura de registros. |
-| Update | Atualização de registros. |
-| Delete | Exclusão de registros. |
-| Count | Retornar a quantidade total de registros. |
-| Find All | Retornar todos os registros. |
-| Find By ID | Buscar um registro específico pelo identificador. |
-| Find By Name | Buscar registros correspondentes a um nome específico. |
-
-### 3.3. Arquitetura
-
-A aplicação deverá utilizar o padrão arquitetural MVC (Model-View-Controller) para organizar seus componentes.
-
-A utilização de banco de dados não é obrigatória, porém a implementação de persistência dos dados será considerada um diferencial.
-
-## 4. Entregáveis
-
-### 4.1. Desenho arquitetural do software
-
-Desenvolver um diagrama arquitetural utilizando uma das seguintes abordagens:
-
-- UML.
-- C4 Model.
-- Outro modelo de diagrama de arquitetura de preferência.
-
-O diagrama poderá ser desenvolvido utilizando ferramentas como Draw.io.
-
-### 4.2. Estrutura de pastas e componentes
-
-Apresentar a estrutura de diretórios do projeto, explicando brevemente a responsabilidade de cada componente.
-
-Os principais componentes esperados são:
-
-| Componente | Responsabilidade |
-|---|---|
-| Controller | Gerenciar as requisições HTTP e disponibilizar os endpoints da API. |
-| Model | Representar as entidades do domínio. |
-| Repository | Responsável pela interação com o banco de dados. |
-| Service | Implementar a lógica de negócio da aplicação. |
-
-### 4.3. Código-fonte (opcional)
-
-Caso opte por disponibilizar a implementação, realizar o upload do código-fonte em um repositório GitHub ou GitLab e compartilhar o link.
-
-### 4.4. Persistência de dados (opcional)
-
-A implementação de persistência em banco de dados é um diferencial do desafio.
-
-## 5. Sugestão de estrutura do projeto
-
-O enunciado apresenta a seguinte estrutura como referência para uma implementação utilizando Spring Boot:
-
-```text
-src/
-└── main/
-    └── java/
-        └── com/exemplo/api/
-            ├── controller/
-            │   └── Controladores HTTP
-            ├── model/
-            │   └── Entidades do domínio
-            ├── repository/
-            │   └── Repositórios de dados
-            ├── service/
-            │   └── Regras de negócio
-            └── ApiApplication.java
+```bash
+mvn spring-boot:run
 ```
 
-## 6. Exemplo de funcionalidades
+A API inicia em `http://localhost:8080`. Para alterar a porta, defina a variável de ambiente `PORT`. A base H2 é criada automaticamente em `data/clientes.mv.db`.
 
-Considerando o domínio de Clientes, os seguintes endpoints podem ser utilizados como referência:
+## Endpoints
 
-| Método HTTP | Endpoint | Descrição |
+Os recursos são representados em JSON. Cliente tem `id`, `nome`, `email`, `telefone`, `criadoEm` e `atualizadoEm`. Nome e email são obrigatórios; emails são normalizados para minúsculas e não podem se repetir.
+
+| Método | Rota | Resposta |
 |---|---|---|
-| GET | `/clientes` | Listar todos os clientes. |
-| GET | `/clientes/{id}` | Buscar cliente pelo ID. |
-| GET | `/clientes/nome/{nome}` | Buscar clientes pelo nome. |
-| GET | `/clientes/contar` | Contar o total de clientes. |
-| POST | `/clientes` | Cadastrar um cliente. |
-| PUT | `/clientes/{id}` | Atualizar um cliente. |
-| DELETE | `/clientes/{id}` | Excluir um cliente. |
+| GET | `/clientes` | Lista todos os clientes |
+| GET | `/clientes/contar` | `{ "total": n }` |
+| GET | `/clientes/{id}` | Cliente pelo identificador |
+| GET | `/clientes/nome/{nome}` | Busca parcial sem distinção de maiúsculas/minúsculas |
+| POST | `/clientes` | Cria cliente (`201 Created`) |
+| PUT | `/clientes/{id}` | Atualiza cliente |
+| DELETE | `/clientes/{id}` | Exclui cliente (`204 No Content`) |
 
-## 7. Critérios de organização e qualidade
+Exemplo de criação:
 
-Durante o desenvolvimento, devem ser considerados os seguintes aspectos:
+```bash
+curl -X POST http://localhost:8080/clientes \
+  -H 'content-type: application/json' \
+  -d '{"nome":"Ana Silva","email":"ana@example.com","telefone":"11999990000"}'
+```
 
-- Organização do código.
-- Separação de responsabilidades.
-- Documentação dos componentes.
-- Isolamento das responsabilidades de Controller, Model e Service.
-- Clareza na estrutura de diretórios.
-- Representação das relações entre os componentes no diagrama arquitetural.
+Dados inválidos retornam `400`, identificadores inexistentes retornam `404` e emails duplicados retornam `409`. Os erros são apresentados em JSON, com detalhes de validação quando aplicável.
 
-## 8. Resumo dos entregáveis
+## Arquitetura
 
-| # | Entregável | Obrigatoriedade |
-|---|---|---|
-| 1 | Arquitetura do software (C4 Model, UML ou outro diagrama) | Obrigatório |
-| 2 | Estrutura de pastas do projeto MVC | Obrigatório |
-| 3 | Explicação da estrutura e dos elementos do código | Obrigatório |
-| 4 | Código-fonte funcionando | Opcional |
-| 5 | Persistência de dados funcionando | Opcional |
+Diagrama de componentes (visão simplificada baseada no C4):
 
----
+```mermaid
+flowchart LR
+    P[Parceiro / consumidor HTTP] -->|JSON, HTTP| C[ClienteController\nEndpoints REST]
+    C --> S[ClienteService\nCasos de uso e regras]
+    S --> R[ClienteRepository\nSpring Data JPA]
+    R -->|JPA| DB[(H2\nclientes.mv.db)]
+    C -. usa .-> M[Cliente\nEntidade e validações]
+    S -. aplica regras ao .-> M
+    R -. persiste .-> M
+```
 
-**Bootcamp: Arquiteto(a) de Software**
+O fluxo de aplicação é `Controller → Service → Repository`. O Controller traduz HTTP para chamadas da aplicação; o Service valida regras e coordena os casos de uso; o Repository abstrai o acesso a dados; e o Model representa a entidade persistida e suas restrições. Spring Boot configura o servidor e conecta as camadas.
 
-*Desafio Final*
+## Estrutura do projeto
+
+```text
+.
+├── data/                                  # Banco H2 criado em tempo de execução
+├── src/main/java/com/exemplo/api/
+│   ├── controller/
+│   │   ├── ClienteController.java         # Endpoints HTTP
+│   │   └── ApiExceptionHandler.java       # Respostas de erro da API
+│   ├── model/
+│   │   └── Cliente.java                   # Entidade e validações
+│   ├── repository/
+│   │   └── ClienteRepository.java         # Consultas com Spring Data JPA
+│   ├── service/
+│   │   └── ClienteService.java            # Regras e casos de uso
+│   └── ApiApplication.java                # Inicialização Spring Boot
+├── src/main/resources/
+│   └── application.properties             # Configuração da aplicação e H2
+├── pom.xml                                # Dependências e build Maven
+└── README.md
+```
+
+O banco H2 em arquivo atende à demonstração e mantém persistência local. Para um ambiente de produção com múltiplas instâncias, configure um banco servidor como PostgreSQL e credenciais externas à aplicação.
